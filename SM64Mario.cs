@@ -8,6 +8,7 @@ namespace LibSM64
     public class SM64Mario : MonoBehaviour
     {
         public PlayerBase p06 = null;
+        public float keepLocked = 0;
 
         Material material = null;
 

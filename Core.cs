@@ -176,7 +176,7 @@ namespace SM64Mod
                     Material material = null;
                     for (int i = 0; i < r.Length; i++)
                     {
-                        LoggerInstance.Msg($"MAT NAME {i} '{r[i].material.name}' '{r[i].material.shader.name}'");
+                        //LoggerInstance.Msg($"MAT NAME {i} '{r[i].material.name}' '{r[i].material.shader.name}'");
 
                         // Make the original player object invisible by forcing the material to not render
                         //r[i].forceRenderingOff = true;
@@ -248,13 +248,17 @@ namespace SM64Mod
 
                 bool LockControls = 
                     (bool)typeof(PlayerBase).GetField("LockControls", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06) ||
-                    o.p06.GetPrefab("sonic_fast");
+                    o.p06.GetPrefab("sonic_fast") ||
+                    o.p06.GetState() == "Pole";
+                bool overrideSM64 = LockControls || Time.fixedTime < o.keepLocked;
 
-                if (LockControls)
+                if (overrideSM64)
                 {
                     o.SetPosition(o.p06.transform.position + new Vector3(0,-0.25f,0));
                     o.SetVelocity(new Vector3(0, o.p06._Rigidbody.velocity.y*3, 0));
                     o.SetFaceAngle(-o.p06.transform.eulerAngles.y / 180 * Mathf.PI);
+                    if (LockControls)
+                        o.keepLocked = Time.fixedTime+0.1f;
                 }
                 else
                 {
@@ -360,9 +364,6 @@ namespace SM64Mod
             IObjLoader objLoader = factory.Create();
             FileStream fileStream = new FileStream($"{Application.streamingAssetsPath}/mario_06/stage_collision/{buildIndex}/{name}.obj", FileMode.Open);
             LoadResult result = objLoader.Load(fileStream);
-            LoggerInstance.Msg($"{result.Groups.Count}");
-            LoggerInstance.Msg($"{result.Groups[1].Faces.Count}");
-            LoggerInstance.Msg($"{result.Groups[1].Faces[0].Count}");
 
             int indexCount = 0;
             for (int i=0; i<result.Groups.Count; i++)
@@ -405,7 +406,6 @@ namespace SM64Mod
             //mesh.SetNormals(normals);
             mesh.SetIndices(indices, MeshTopology.Triangles, 0);
             mesh.UploadMeshData(false);
-            LoggerInstance.Msg($"{mesh.triangles.Length} {mesh.GetTriangles(0).Length}");
 
             mesh.RecalculateBounds();
             mesh.RecalculateNormals();
