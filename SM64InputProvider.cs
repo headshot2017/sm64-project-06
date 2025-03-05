@@ -49,11 +49,12 @@ namespace LibSM64
 
                 case Button.Kick:
                     //result = inp.GetButton(EQUIPMENT);
-                    result = P.GetButton("Button B");
+                    result = P.GetButton("Button X");
                     break;
 
                 case Button.Stomp:
                     //result = inp.GetButton(INTERACT);
+                    result = P.GetButton("Right Trigger");
                     break;
             }
 
