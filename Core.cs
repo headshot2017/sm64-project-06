@@ -226,6 +226,7 @@ namespace SM64Mod
                         mario.SetMaterial(material);
                         RegisterMario(mario);
                         mario.p06 = p;
+                        mario.keepLocked = Time.fixedTime + 0.1f;
                     }
                     else
                         LoggerInstance.Msg("Failed to spawn Mario");
@@ -254,9 +255,15 @@ namespace SM64Mod
 
                 if (overrideSM64)
                 {
+                    Quaternion rot = (Quaternion)typeof(PlayerBase).GetField("GeneralMeshRotation", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06);
+                    float angle = rot.eulerAngles.y;
+                    if (angle > 180) angle -= 360;
+                    if (angle < -180) angle += 360;
+
                     o.SetPosition(o.p06.transform.position + new Vector3(0,-0.25f,0));
                     o.SetVelocity(new Vector3(0, o.p06._Rigidbody.velocity.y*3, 0));
-                    o.SetFaceAngle(-o.p06.transform.eulerAngles.y / 180 * Mathf.PI);
+                    o.SetFaceAngle(-angle / 180 * Mathf.PI);
+                    //o.marioRendererObject.transform.eulerAngles = new Vector3(o.p06.transform.eulerAngles.x, 0, o.p06.transform.eulerAngles.z);
                     if (LockControls)
                         o.keepLocked = Time.fixedTime+0.1f;
                 }
@@ -264,6 +271,7 @@ namespace SM64Mod
                 {
                     o.p06.transform.position = o.transform.position + new Vector3(0, 0.25f, 0);
                     o.p06.transform.eulerAngles = new Vector3(o.p06.transform.eulerAngles.x, -o.marioState.faceAngle / Mathf.PI * 180, o.p06.transform.eulerAngles.z);
+                    o.marioRendererObject.transform.eulerAngles = Vector3.zero;
                 }
             }
         }
