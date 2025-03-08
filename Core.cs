@@ -257,20 +257,23 @@ namespace SM64Mod
                 {
                     Quaternion rot = (Quaternion)typeof(PlayerBase).GetField("GeneralMeshRotation", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06);
                     float angle = rot.eulerAngles.y;
-                    if (angle > 180) angle -= 360;
-                    if (angle < -180) angle += 360;
+                    //if (angle > 180) angle -= 360;
+                    //if (angle < -180) angle += 360;
 
                     o.SetPosition(o.p06.transform.position + new Vector3(0,-0.25f,0));
                     o.SetVelocity(new Vector3(0, o.p06._Rigidbody.velocity.y*3, 0));
                     o.SetFaceAngle(-angle / 180 * Mathf.PI);
-                    //o.marioRendererObject.transform.eulerAngles = new Vector3(o.p06.transform.eulerAngles.x, 0, o.p06.transform.eulerAngles.z);
+                    o.marioRendererObjectRoot.transform.eulerAngles = rot.eulerAngles;
+                    o.marioRendererObject.transform.localEulerAngles = new Vector3(0, rot.eulerAngles.y, 0);
                     if (LockControls)
                         o.keepLocked = Time.fixedTime+0.1f;
                 }
                 else
                 {
+                    typeof(PlayerBase).GetField("CurSpeed", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(o.p06, 0f);
                     o.p06.transform.position = o.transform.position + new Vector3(0, 0.25f, 0);
                     o.p06.transform.eulerAngles = new Vector3(o.p06.transform.eulerAngles.x, -o.marioState.faceAngle / Mathf.PI * 180, o.p06.transform.eulerAngles.z);
+                    o.marioRendererObjectRoot.transform.eulerAngles = Vector3.zero;
                     o.marioRendererObject.transform.eulerAngles = Vector3.zero;
                 }
             }

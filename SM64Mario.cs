@@ -24,6 +24,7 @@ namespace LibSM64
         int buffIndex;
         Interop.SM64MarioState[] states;
 
+        public GameObject marioRendererObjectRoot;
         public GameObject marioRendererObject;
         MeshRenderer renderer;
         Mesh marioMesh;
@@ -53,8 +54,11 @@ namespace LibSM64
             if (inputProvider == null)
                 throw new System.Exception("Need to add an input provider component to Mario");
 
+            marioRendererObjectRoot = new GameObject("MARIO_ROOT");
+            marioRendererObjectRoot.hideFlags |= HideFlags.HideInHierarchy;
             marioRendererObject = new GameObject("MARIO");
             marioRendererObject.hideFlags |= HideFlags.HideInHierarchy;
+            marioRendererObject.transform.parent = marioRendererObjectRoot.transform;
 
             renderer = marioRendererObject.AddComponent<MeshRenderer>();
             var meshFilter = marioRendererObject.AddComponent<MeshFilter>();
@@ -64,8 +68,8 @@ namespace LibSM64
                 new Interop.SM64MarioState()
             };
 
-            marioRendererObject.transform.localScale = new Vector3( -1, 1, 1 ) / Interop.SCALE_FACTOR;
-            marioRendererObject.transform.localPosition = Vector3.zero;
+            marioRendererObjectRoot.transform.localScale = new Vector3( -1, 1, 1 ) / Interop.SCALE_FACTOR;
+            marioRendererObjectRoot.transform.localPosition = Vector3.zero;
 
             Melon<SM64Mod.Core>.Logger.Msg("new vectors");
             lerpPositionBuffer = new Vector3[3 * Interop.SM64_GEO_MAX_TRIANGLES];
@@ -119,7 +123,7 @@ namespace LibSM64
         {
             Interop.MarioSetPosition(marioId, position);
             transform.position = position;
-            marioRendererObject.transform.position = position;
+            marioRendererObjectRoot.transform.position = position;
         }
 
         public void SetVelocity(Vector3 vel)
@@ -273,7 +277,7 @@ namespace LibSM64
             }
 
             transform.position = Vector3.LerpUnclamped( states[buffIndex].unityPosition, states[j].unityPosition, t );
-            marioRendererObject.transform.position = transform.position;
+            marioRendererObjectRoot.transform.position = transform.position;
 
             marioMesh.vertices = lerpPositionBuffer;
             marioMesh.normals = lerpNormalBuffer;
