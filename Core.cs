@@ -226,6 +226,7 @@ namespace SM64Mod
                         mario.SetMaterial(material);
                         RegisterMario(mario);
                         mario.p06 = p;
+                        input.p06 = p;
                         mario.keepLocked = Time.fixedTime + 0.1f;
                     }
                     else
@@ -252,6 +253,8 @@ namespace SM64Mod
                     o.p06.GetPrefab("sonic_fast") ||
                     o.p06.GetState() == "Pole";
                 bool overrideSM64 = LockControls || Time.fixedTime < o.keepLocked;
+                SM64InputGame input = (SM64InputGame)o.inputProvider;
+                input.locked = overrideSM64;
 
                 if (overrideSM64)
                 {

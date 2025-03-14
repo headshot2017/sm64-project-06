@@ -12,7 +12,7 @@ namespace LibSM64
 
         Material material = null;
 
-        SM64InputProvider inputProvider;
+        public SM64InputProvider inputProvider;
 
         Vector3[][] positionBuffers;
         Vector3[][] normalBuffers;
