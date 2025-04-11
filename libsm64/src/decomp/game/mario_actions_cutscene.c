@@ -2653,6 +2653,40 @@ static s32 act_end_waving_cutscene(struct MarioState *m) {
     return FALSE;
 }
 
+static s32 act_custom_anim(struct MarioState *m) {
+    switch (m->actionArg)
+    {
+        case 1:
+            stationary_ground_step(m);
+            break;
+
+        case 2:
+            perform_air_step(m, 1);
+            break;
+    }
+    return FALSE;
+}
+
+/*
+static s32 act_custom_anim_to_action(struct MarioState *m) {
+    switch (m->actionArg)
+    {
+        case 1:
+            stationary_ground_step(m);
+            break;
+
+        case 2:
+            perform_air_step(m, 1);
+            break;
+    }
+    if (!m->actionArg2) m->actionArg2 = ACT_IDLE;
+
+    if (is_anim_at_end(m))
+        return set_mario_action(m, m->actionArg2, 0);
+    return FALSE;
+}
+*/
+
 static s32 check_for_instant_quicksand(struct MarioState *m) {
     if (m->floor->type == SURFACE_INSTANT_QUICKSAND && m->action & ACT_FLAG_INVULNERABLE
         && m->action != ACT_QUICKSAND_DEATH) {
@@ -2722,6 +2756,8 @@ s32 mario_execute_cutscene_action(struct MarioState *m) {
         case ACT_BUTT_STUCK_IN_GROUND:       cancel = act_butt_stuck_in_ground(m);       break;
         case ACT_FEET_STUCK_IN_GROUND:       cancel = act_feet_stuck_in_ground(m);       break;
         case ACT_PUTTING_ON_CAP:             cancel = act_putting_on_cap(m);             break;
+        case ACT_CUSTOM_ANIM:                cancel = act_custom_anim(m);                break;
+        //case ACT_CUSTOM_ANIM_TO_ACTION:      cancel = act_custom_anim_to_action(m);      break;
     }
     /* clang-format on */
 

@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using ObjLoader.Loader.Loaders;
+using static SM64Constants.Action;
+using static SM64Constants.MarioAnimID;
 
 [assembly: MelonInfo(typeof(SM64Mod.Core), "mario-06", "1.0.0", "Headshotnoby/headshot2017", null)]
 [assembly: MelonGame("Nights of Kronos", "Sonic the Hedgehog")]
@@ -258,12 +260,25 @@ namespace SM64Mod
                     o.SetHealth(0x800);
                 o.contextUpdate();
 
+                SM64InputGame input = (SM64InputGame)o.inputProvider;
+
+                input.lockForward = true;
+                if (o.p06.GetState() == "WaterSlide")
+                {
+                    input.lockForward = false;
+                    o.SetAction(ACT_CUSTOM_ANIM);
+                    o.SetAnim(MARIO_ANIM_SKID_ON_GROUND);
+                }
+                else if (o.marioState.action == (uint)ACT_CUSTOM_ANIM)
+                {
+                    o.SetAction(ACT_FREEFALL);
+                }
+
                 bool LockControls = 
                     (bool)typeof(PlayerBase).GetField("LockControls", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06) ||
                     o.p06.GetPrefab("sonic_fast") ||
                     o.p06.GetState() == "Pole";
                 bool overrideSM64 = LockControls || Time.fixedTime < o.keepLocked;
-                SM64InputGame input = (SM64InputGame)o.inputProvider;
                 input.locked = overrideSM64;
 
                 if (overrideSM64)

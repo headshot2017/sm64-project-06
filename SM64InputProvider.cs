@@ -23,6 +23,7 @@ namespace LibSM64
     {
         public PlayerBase p06 = null;
         public bool locked = false;
+        public bool lockForward = false;
 
         public override Vector3 GetCameraLookDirection()
         {
@@ -42,7 +43,7 @@ namespace LibSM64
             // For button held: return -((buttonLeft) ? Vector2.left : (buttonRight) ? Vector2.right : Vector2.zero);
 
             if (locked)
-                return new Vector2(-1, 0);
+                return new Vector2((lockForward) ? -1 : 0, 0);
 
             Rewired.Player P = (Rewired.Player)typeof(RInput).GetField("P", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Singleton<RInput>.Instance);
             return new Vector2(P.GetAxis("Left Stick Y"), -P.GetAxis("Left Stick X")).normalized;
