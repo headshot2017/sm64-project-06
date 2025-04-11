@@ -89,6 +89,8 @@ namespace SM64Mod
                     surfaceObj.transform.position = c.transform.position;
 
                     Mesh ogMesh = c.sharedMesh;
+                    Mesh mesh = ogMesh;
+
                     if (!ogMesh.isReadable)
                     {
                         /*
@@ -99,25 +101,24 @@ namespace SM64Mod
                             ogMesh.SetTriangles(copy.GetTriangles(j), j);
                         }
                         */
-                        ogMesh = ReadOBJFile(buildIndex, c.name);
+                        mesh = ReadOBJFile(buildIndex, c.name);
                     }
-
-                    /*
-                    List<int> tris = new List<int>();
-                    LoggerInstance.Msg($"{ogMesh.name} {ogMesh.subMeshCount} {ogMesh.vertexCount} {ogMesh.vertices.Length} {ogMesh.triangles.Length}");
-                    for (int j = 0; j < ogMesh.subMeshCount; j++)
+                    else
                     {
-                        int[] sub = ogMesh.GetTriangles(j);
-                        for (int k = 0; k < sub.Length; k++)
-                            tris.Add(sub[k]);
-                    }
+                        List<int> tris = new List<int>();
+                        LoggerInstance.Msg($"{ogMesh.name} {ogMesh.subMeshCount} {ogMesh.vertexCount} {ogMesh.vertices.Length} {ogMesh.triangles.Length}");
+                        for (int j = 0; j < ogMesh.subMeshCount; j++)
+                        {
+                            int[] sub = ogMesh.GetTriangles(j);
+                            for (int k = 0; k < sub.Length; k++)
+                                tris.Add(sub[k]);
+                        }
 
-                    Mesh mesh = new Mesh();
-                    mesh.name = $"SM64_MESH {i}";
-                    mesh.SetVertices(new List<Vector3>(ogMesh.vertices));
-                    mesh.SetTriangles(tris, 0);
-                    */
-                    Mesh mesh = ogMesh;
+                        mesh = new Mesh();
+                        mesh.name = $"SM64_MESH {i}";
+                        mesh.SetVertices(new List<Vector3>(ogMesh.vertices));
+                        mesh.SetTriangles(tris, 0);
+                    }
 
                     surfaceMesh.sharedMesh = mesh;
                     //filt.sharedMesh = mesh;
@@ -136,7 +137,11 @@ namespace SM64Mod
 
                     GameObject surfaceObj = new GameObject($"SM64_SURFACE_BOX ({c.name})");
                     MeshCollider surfaceMesh = surfaceObj.AddComponent<MeshCollider>();
+                    MeshFilter filter = surfaceObj.AddComponent<MeshFilter>();
+                    MeshRenderer renderer = surfaceObj.AddComponent<MeshRenderer>();
                     surfaceObj.AddComponent<SM64StaticTerrain>();
+                    surfaceObj.transform.rotation = c.transform.rotation;
+                    surfaceObj.transform.position = c.transform.position;
 
                     Mesh mesh = new Mesh();
                     mesh.name = $"SM64_MESH {i}";
@@ -163,6 +168,7 @@ namespace SM64Mod
                         //2, 4, 6,
                     }, 0);
                     surfaceMesh.sharedMesh = mesh;
+                    filter.sharedMesh = mesh;
                 }
                 RefreshStaticTerrain();
                 */
@@ -245,7 +251,11 @@ namespace SM64Mod
                 if (!o.p06)
                     continue;
 
-                o.SetHealth(0x800);
+                bool IsDead = (bool)typeof(PlayerBase).GetField("IsDead", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06);
+                if (IsDead)
+                    o.Kill();
+                else
+                    o.SetHealth(0x800);
                 o.contextUpdate();
 
                 bool LockControls = 
