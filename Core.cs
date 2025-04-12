@@ -262,22 +262,50 @@ namespace SM64Mod
 
                 SM64InputGame input = (SM64InputGame)o.inputProvider;
 
-                input.lockForward = true;
+                // this is ugly as hell
                 if (o.p06.GetState() == "WaterSlide")
                 {
-                    input.lockForward = false;
                     o.SetAction(ACT_CUSTOM_ANIM);
                     o.SetAnim(MARIO_ANIM_SKID_ON_GROUND);
                 }
-                else if (o.marioState.action == (uint)ACT_CUSTOM_ANIM)
+                else if (o.p06.GetState() == "Path")
                 {
-                    o.SetAction(ACT_FREEFALL);
+                    o.SetAction(ACT_CUSTOM_ANIM);
+                    o.SetAnimAccel(MARIO_ANIM_RUNNING, 0xC0000);
+                }
+                else if (o.p06.GetState() == "LightDash")
+                {
+                    o.SetAction(ACT_CUSTOM_ANIM);
+                    o.SetAnim(MARIO_ANIM_SWIM_PART1);
+                }
+                else if (o.p06.GetState() == "Grinding")
+                {
+                    o.SetAction(ACT_CUSTOM_ANIM_JUMP);
+                    o.SetAnim(MARIO_ANIM_START_RIDING_SHELL);
+                }
+                else if (o.p06.GetState() == "RainbowRing")
+                {
+                    if (o.marioState.action != (uint)ACT_SPECIAL_TRIPLE_JUMP)
+                        o.SetAction(ACT_SPECIAL_TRIPLE_JUMP);
+                }
+                else if (o.p06.GetState() == "Result")
+                {
+
+                }
+                else if (o.p06.GetState() == "Orca")
+                {
+                    o.SetAction(ACT_CUSTOM_ANIM);
+                    o.SetAnim(MARIO_ANIM_DIVE);
+                }
+                else if (o.marioState.action == (uint)ACT_CUSTOM_ANIM || o.marioState.action == (uint)ACT_CUSTOM_ANIM_JUMP)
+                {
+                    o.SetAction(ACT_WALKING);
                 }
 
                 bool LockControls = 
                     (bool)typeof(PlayerBase).GetField("LockControls", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06) ||
                     o.p06.GetPrefab("sonic_fast") ||
-                    o.p06.GetState() == "Pole";
+                    o.p06.GetState() == "Pole" || o.p06.GetState() == "JumpDash";
                 bool overrideSM64 = LockControls || Time.fixedTime < o.keepLocked;
                 input.locked = overrideSM64;
 

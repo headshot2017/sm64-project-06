@@ -189,6 +189,8 @@ namespace LibSM64
         [DllImport("sm64")]
         static extern void sm64_set_mario_animation(int marioId, int animID);
         [DllImport("sm64")]
+        static extern void sm64_set_mario_animation_accel(int marioId, int animID, int accel);
+        [DllImport("sm64")]
         static extern void sm64_set_mario_anim_frame(int marioId, short animFrame);
         [DllImport("sm64")]
         static extern void sm64_set_mario_state(int marioId, uint flags);
@@ -452,6 +454,11 @@ namespace LibSM64
         public static void MarioSetAnim(int marioId, SM64Constants.MarioAnimID animID)
         {
             sm64_set_mario_animation(marioId, (int)animID);
+        }
+
+        public static void MarioSetAnimAccel(int marioId, SM64Constants.MarioAnimID animID, int accel)
+        {
+            sm64_set_mario_animation_accel(marioId, (int)animID, accel);
         }
 
         public static void MarioSetAnimFrame(int marioId, short animFrame)

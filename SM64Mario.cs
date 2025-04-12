@@ -190,6 +190,13 @@ namespace LibSM64
                 states[i].animID = (short)animID;
         }
 
+        public void SetAnimAccel(SM64Constants.MarioAnimID animID, int accel)
+        {
+            Interop.MarioSetAnimAccel(marioId, animID, accel);
+            for (int i = 0; i < states.Length; i++)
+                states[i].animID = (short)animID;
+        }
+
         public void SetAnimFrame(short frame)
         {
             Interop.MarioSetAnimFrame(marioId, frame);
