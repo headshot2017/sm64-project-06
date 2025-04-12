@@ -290,7 +290,7 @@ namespace LibSM64
             //sm64_register_debug_print_function(Marshal.GetFunctionPointerForDelegate(debugDelegate));
 
             Color32[] cols = new Color32[ SM64_TEXTURE_WIDTH * SM64_TEXTURE_HEIGHT ];
-            defaultTexture = new Texture2D( SM64_TEXTURE_WIDTH, SM64_TEXTURE_HEIGHT );
+            defaultTexture = new Texture2D( SM64_TEXTURE_WIDTH, SM64_TEXTURE_HEIGHT, TextureFormat.RGBA32, false);
             for (int ix = 0; ix < SM64_TEXTURE_WIDTH; ix++)
             {
                 for (int iy = 0; iy < SM64_TEXTURE_HEIGHT; iy++)
@@ -325,7 +325,7 @@ namespace LibSM64
 
         public static Texture2D GenerateTexture(Color32[] customColors)
         {
-            Texture2D texture = new Texture2D(SM64_TEXTURE_WIDTH, SM64_TEXTURE_HEIGHT);
+            Texture2D texture = new Texture2D(SM64_TEXTURE_WIDTH, SM64_TEXTURE_HEIGHT, TextureFormat.RGBA32, false);
             Color32[] cols = defaultTexture.GetPixels32();
 
             // Store Mario's default colors in the texture.
