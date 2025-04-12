@@ -177,9 +177,12 @@ namespace SM64Mod
 
                 // "p" is the player object/component in this case.
                 // You'll need to get this object yourself
-                PlayerBase p = GameObject.FindWithTag("Player").GetComponent<PlayerBase>();
+                GameObject p = GameObject.FindWithTag("Player");
                 if (p != null)
                 {
+                    PlayerBase pBase = p.GetComponent<PlayerBase>();
+                    p.transform.GetChild(4).gameObject.SetActive(false); // disable "Mesh" child. hides the player model
+
                     Renderer[] r = p.GetComponentsInChildren<Renderer>();
                     Material material = null;
                     for (int i = 0; i < r.Length; i++)
@@ -233,8 +236,8 @@ namespace SM64Mod
                     {
                         mario.SetMaterial(material);
                         RegisterMario(mario);
-                        mario.p06 = p;
-                        input.p06 = p;
+                        mario.p06 = pBase;
+                        input.p06 = pBase;
                         mario.keepLocked = Time.fixedTime + 0.1f;
                     }
                     else
@@ -268,7 +271,7 @@ namespace SM64Mod
                     o.SetAction(ACT_CUSTOM_ANIM);
                     o.SetAnim(MARIO_ANIM_SKID_ON_GROUND);
                 }
-                else if (o.p06.GetState() == "Path")
+                else if (o.p06.GetState() == "Path" || o.p06.GetState() == "DashPanel")
                 {
                     o.SetAction(ACT_CUSTOM_ANIM);
                     o.SetAnimAccel(MARIO_ANIM_RUNNING, 0xC0000);
