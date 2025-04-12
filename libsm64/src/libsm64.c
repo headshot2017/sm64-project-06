@@ -341,6 +341,20 @@ SM64_LIB_FN void sm64_set_mario_animation(int32_t marioId, int32_t animID)
     set_mario_animation(gMarioState, animID);
 }
 
+SM64_LIB_FN void sm64_set_mario_animation_accel(int32_t marioId, int32_t animID, int32_t accel)
+{
+    if( marioId >= s_mario_instance_pool.size || s_mario_instance_pool.objects[marioId] == NULL )
+    {
+        DEBUG_PRINT("Tried to use non-existant Mario with ID: %d", marioId);
+        return;
+    }
+
+    struct GlobalState *globalState = ((struct MarioInstance *)s_mario_instance_pool.objects[ marioId ])->globalState;
+    global_state_bind( globalState );
+
+    set_mario_anim_with_accel(gMarioState, animID, accel);
+}
+
 SM64_LIB_FN void sm64_set_mario_anim_frame(int32_t marioId, int16_t animFrame)
 {
     if( marioId >= s_mario_instance_pool.size || s_mario_instance_pool.objects[marioId] == NULL )
