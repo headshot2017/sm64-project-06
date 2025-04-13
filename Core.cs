@@ -266,49 +266,15 @@ namespace SM64Mod
                 SM64InputGame input = (SM64InputGame)o.inputProvider;
 
                 // this is ugly as hell
-                if (o.p06.GetState() == "WaterSlide")
-                {
-                    o.SetAction(ACT_CUSTOM_ANIM);
-                    o.SetAnim(MARIO_ANIM_SKID_ON_GROUND);
-                }
-                else if (o.p06.GetState() == "Path" || o.p06.GetState() == "DashPanel")
-                {
-                    o.SetAction(ACT_CUSTOM_ANIM);
-                    o.SetAnimAccel(MARIO_ANIM_RUNNING, 0xC0000);
-                }
-                else if (o.p06.GetState() == "LightDash")
-                {
-                    o.SetAction(ACT_CUSTOM_ANIM);
-                    o.SetAnim(MARIO_ANIM_SWIM_PART1);
-                }
-                else if (o.p06.GetState() == "Grinding")
-                {
-                    o.SetAction(ACT_CUSTOM_ANIM_JUMP);
-                    o.SetAnim(MARIO_ANIM_START_RIDING_SHELL);
-                }
-                else if (o.p06.GetState() == "RainbowRing")
-                {
-                    if (o.marioState.action != (uint)ACT_SPECIAL_TRIPLE_JUMP)
-                        o.SetAction(ACT_SPECIAL_TRIPLE_JUMP);
-                }
-                else if (o.p06.GetState() == "Result")
-                {
-
-                }
-                else if (o.p06.GetState() == "Orca")
-                {
-                    o.SetAction(ACT_CUSTOM_ANIM);
-                    o.SetAnim(MARIO_ANIM_DIVE);
-                }
-                else if (o.marioState.action == (uint)ACT_CUSTOM_ANIM || o.marioState.action == (uint)ACT_CUSTOM_ANIM_JUMP)
-                {
-                    o.SetAction(ACT_WALKING);
-                }
+                if (o.p06.GetType() == typeof(SonicNew))
+                    HandleSonicAnimations(o);
+                else if (o.p06.GetType() == typeof(SonicFast))
+                    HandleMachSonicAnimations(o);
 
                 bool LockControls = 
                     (bool)typeof(PlayerBase).GetField("LockControls", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06) ||
                     o.p06.GetPrefab("sonic_fast") ||
-                    o.p06.GetState() == "Pole" || o.p06.GetState() == "JumpDash";
+                    o.p06.GetState() == "Pole" || o.p06.GetState() == "JumpDash" || o.p06.GetState() == "Result";
                 bool overrideSM64 = LockControls || Time.fixedTime < o.keepLocked;
                 input.locked = overrideSM64;
 
@@ -379,6 +345,96 @@ namespace SM64Mod
         {
             if (_surfaceObjects.Contains(surfaceObject))
                 _surfaceObjects.Remove(surfaceObject);
+        }
+
+        void HandleSonicAnimations(SM64Mario o)
+        {
+            if (o.p06.GetState() == "WaterSlide")
+            {
+                o.SetAction(ACT_CUSTOM_ANIM);
+                o.SetAnim(MARIO_ANIM_SKID_ON_GROUND);
+            }
+            else if (o.p06.GetState() == "Path" || o.p06.GetState() == "DashPanel")
+            {
+                o.SetAction(ACT_CUSTOM_ANIM);
+                o.SetAnimAccel(MARIO_ANIM_RUNNING, 0xC0000);
+            }
+            else if (o.p06.GetState() == "LightDash")
+            {
+                o.SetAction(ACT_CUSTOM_ANIM);
+                o.SetAnim(MARIO_ANIM_SWIM_PART1);
+            }
+            else if (o.p06.GetState() == "Grinding")
+            {
+                o.SetAction(ACT_CUSTOM_ANIM_JUMP);
+                o.SetAnim(MARIO_ANIM_START_RIDING_SHELL);
+            }
+            else if (o.p06.GetState() == "RainbowRing")
+            {
+                if (o.marioState.action != (uint)ACT_SPECIAL_TRIPLE_JUMP)
+                    o.SetAction(ACT_SPECIAL_TRIPLE_JUMP);
+            }
+            else if (o.p06.GetState() == "Result")
+            {
+
+            }
+            else if (o.p06.GetState() == "Orca")
+            {
+                o.SetAction(ACT_CUSTOM_ANIM);
+                o.SetAnim(MARIO_ANIM_DIVE);
+            }
+            else if (o.marioState.action == (uint)ACT_CUSTOM_ANIM || o.marioState.action == (uint)ACT_CUSTOM_ANIM_JUMP)
+            {
+                o.SetAction(ACT_WALKING);
+            }
+        }
+
+        void HandleMachSonicAnimations(SM64Mario o)
+        {
+            if (o.p06.GetState() == "Ground" || o.p06.GetState() == "Path" || o.p06.GetState() == "DashPanel")
+            {
+                o.SetAction(ACT_CUSTOM_ANIM);
+                o.SetAnimAccel(MARIO_ANIM_RUNNING, 0xC0000);
+            }
+            else if (o.p06.GetState() == "LightDash")
+            {
+                o.SetAction(ACT_CUSTOM_ANIM);
+                o.SetAnim(MARIO_ANIM_SWIM_PART1);
+            }
+            else if (o.p06.GetState() == "Grinding")
+            {
+                o.SetAction(ACT_CUSTOM_ANIM_JUMP);
+                o.SetAnim(MARIO_ANIM_START_RIDING_SHELL);
+            }
+            else if (o.p06.GetState() == "RainbowRing")
+            {
+                if (o.marioState.action != (uint)ACT_SPECIAL_TRIPLE_JUMP)
+                    o.SetAction(ACT_SPECIAL_TRIPLE_JUMP);
+            }
+            else if (o.p06.GetState() == "WallSlam")
+            {
+                if (o.marioState.action != (uint)ACT_BACKWARD_AIR_KB)
+                {
+                    o.SetForwardVelocity(28);
+                    o.SetAction(ACT_BACKWARD_AIR_KB);
+                }
+            }
+            else if (o.p06.GetState() == "Hurt")
+            {
+                if (o.marioState.action != (uint)ACT_FORWARD_AIR_KB)
+                {
+                    o.SetForwardVelocity(28);
+                    o.SetAction(ACT_FORWARD_AIR_KB);
+                }
+            }
+            else if (o.p06.GetState() == "Result")
+            {
+
+            }
+            else if (o.marioState.action == (uint)ACT_CUSTOM_ANIM || o.marioState.action == (uint)ACT_CUSTOM_ANIM_JUMP)
+            {
+                o.SetAction(ACT_WALKING);
+            }
         }
 
         List<Vector3> GetColliderVertexPositions(BoxCollider col)
