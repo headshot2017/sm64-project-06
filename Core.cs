@@ -282,9 +282,8 @@ namespace SM64Mod
                 {
                     Quaternion rot = (Quaternion)typeof(PlayerBase).GetField("GeneralMeshRotation", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06);
                     float angle = rot.eulerAngles.y;
-                    //if (angle > 180) angle -= 360;
-                    //if (angle < -180) angle += 360;
 
+                    // put in front of the camera
                     o.SetPosition(
                         new Vector3(
                             Camera.main.transform.position.x + (Camera.main.transform.forward.x * 3),
@@ -298,14 +297,25 @@ namespace SM64Mod
                 {
                     Quaternion rot = (Quaternion)typeof(PlayerBase).GetField("GeneralMeshRotation", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06);
                     float angle = rot.eulerAngles.y;
-                    //if (angle > 180) angle -= 360;
-                    //if (angle < -180) angle += 360;
 
                     o.SetPosition(o.p06.transform.position + new Vector3(0,-0.25f,0));
                     o.SetVelocity(new Vector3(0, o.p06._Rigidbody.velocity.y*3, 0));
-                    o.SetFaceAngle(-angle / 180 * Mathf.PI);
+
                     o.marioRendererObjectRoot.transform.eulerAngles = rot.eulerAngles;
-                    o.marioRendererObject.transform.localEulerAngles = new Vector3(0, rot.eulerAngles.y, 0);
+                    if (o.p06.GetState() == "Pole")
+                    {
+                        o.marioRendererObjectRoot.transform.position += new Vector3(0, 0.45f, 0);
+                        o.marioRendererObject.transform.localEulerAngles = new Vector3(0, 185, 0);
+                        o.marioRendererObject.transform.localPosition = new Vector3(0, 0, -100);
+                        o.SetFaceAngle(185 / 180 * Mathf.PI);
+                    }
+                    else
+                    {
+                        o.marioRendererObject.transform.localEulerAngles = new Vector3(0, rot.eulerAngles.y, 0);
+                        o.marioRendererObject.transform.localPosition = Vector3.zero;
+                        o.SetFaceAngle(-angle / 180 * Mathf.PI);
+                    }
+
                     if (LockControls)
                         o.keepLocked = Time.fixedTime+0.1f;
                 }
