@@ -274,11 +274,27 @@ namespace SM64Mod
                 bool LockControls = 
                     (bool)typeof(PlayerBase).GetField("LockControls", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06) ||
                     o.p06.GetPrefab("sonic_fast") ||
-                    o.p06.GetState() == "Pole" || o.p06.GetState() == "JumpDash" || o.p06.GetState() == "Result";
+                    o.p06.GetState() == "Pole" || o.p06.GetState() == "JumpDash";
                 bool overrideSM64 = LockControls || Time.fixedTime < o.keepLocked;
                 input.locked = overrideSM64;
 
-                if (overrideSM64)
+                if (o.p06.GetState() == "Result")
+                {
+                    Quaternion rot = (Quaternion)typeof(PlayerBase).GetField("GeneralMeshRotation", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06);
+                    float angle = rot.eulerAngles.y;
+                    //if (angle > 180) angle -= 360;
+                    //if (angle < -180) angle += 360;
+
+                    o.SetPosition(
+                        new Vector3(
+                            Camera.main.transform.position.x + (Camera.main.transform.forward.x * 3),
+                            o.p06.transform.position.y - 0.25f,
+                            Camera.main.transform.position.z + (Camera.main.transform.forward.z * 3)
+                        )
+                    );
+                    o.SetFaceAngle(-angle / 180 * Mathf.PI);
+                }
+                else if (overrideSM64)
                 {
                     Quaternion rot = (Quaternion)typeof(PlayerBase).GetField("GeneralMeshRotation", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06);
                     float angle = rot.eulerAngles.y;
@@ -363,6 +379,7 @@ namespace SM64Mod
             {
                 o.SetAction(ACT_CUSTOM_ANIM);
                 o.SetAnim(MARIO_ANIM_SWIM_PART1);
+                o.SetAnimFrame(13);
             }
             else if (o.p06.GetState() == "Grinding")
             {
@@ -376,9 +393,10 @@ namespace SM64Mod
             }
             else if (o.p06.GetState() == "Result")
             {
-
+                if (o.marioState.action != (uint)ACT_STAR_DANCE_EXIT)
+                    o.SetAction(ACT_STAR_DANCE_EXIT);
             }
-            else if (o.p06.GetState() == "Orca")
+            else if (o.p06.GetState() == "Orca" || o.p06.GetState() == "Pole")
             {
                 o.SetAction(ACT_CUSTOM_ANIM);
                 o.SetAnim(MARIO_ANIM_DIVE);
@@ -400,6 +418,7 @@ namespace SM64Mod
             {
                 o.SetAction(ACT_CUSTOM_ANIM);
                 o.SetAnim(MARIO_ANIM_SWIM_PART1);
+                o.SetAnimFrame(13);
             }
             else if (o.p06.GetState() == "Grinding")
             {
@@ -429,7 +448,8 @@ namespace SM64Mod
             }
             else if (o.p06.GetState() == "Result")
             {
-
+                if (o.marioState.action != (uint)ACT_STAR_DANCE_EXIT)
+                    o.SetAction(ACT_STAR_DANCE_EXIT);
             }
             else if (o.marioState.action == (uint)ACT_CUSTOM_ANIM || o.marioState.action == (uint)ACT_CUSTOM_ANIM_JUMP)
             {
