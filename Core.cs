@@ -181,7 +181,12 @@ namespace SM64Mod
                 if (p != null)
                 {
                     PlayerBase pBase = p.GetComponent<PlayerBase>();
-                    p.transform.GetChild(4).gameObject.SetActive(false); // disable "Mesh" child. hides the player model
+                    for (int i=0; i<p.transform.childCount; i++)
+                    {
+                        if (p.transform.GetChild(i).name != "Mesh") continue;
+                        p.transform.GetChild(i).gameObject.SetActive(false); // disable "Mesh" child. hides the player model
+                        break;
+                    }
 
                     Renderer[] r = p.GetComponentsInChildren<Renderer>();
                     Material material = null;
@@ -267,7 +272,7 @@ namespace SM64Mod
                 SM64InputGame input = (SM64InputGame)o.inputProvider;
 
                 // this is ugly as hell
-                if (o.p06.GetType() == typeof(SonicNew))
+                if (o.p06.GetType() == typeof(SonicNew) || o.p06.GetType() == typeof(Princess))
                     HandleSonicAnimations(o);
                 else if (o.p06.GetType() == typeof(SonicFast))
                     HandleMachSonicAnimations(o);
