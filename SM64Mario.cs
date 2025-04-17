@@ -204,6 +204,16 @@ namespace LibSM64
                 states[i].animFrame = frame;
         }
 
+        public void SetWaterLevel(int level)
+        {
+            Interop.MarioSetWaterLevel(marioId, level);
+        }
+
+        public void SetGasLevel(int level)
+        {
+            Interop.MarioSetGasLevel(marioId, level);
+        }
+
         public bool Attack(Vector3 pos, float hitboxHeight)
         {
             return Interop.MarioAttack(marioId, pos, hitboxHeight);

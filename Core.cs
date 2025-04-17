@@ -235,6 +235,7 @@ namespace SM64Mod
                     if (mario.spawned)
                     {
                         mario.SetMaterial(material);
+                        mario.SetWaterLevel(-100000);
                         RegisterMario(mario);
                         mario.p06 = pBase;
                         input.p06 = pBase;
