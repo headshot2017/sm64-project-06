@@ -273,7 +273,7 @@ namespace SM64Mod
 
                 bool LockControls = 
                     (bool)typeof(PlayerBase).GetField("LockControls", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06) ||
-                    o.p06.GetPrefab("sonic_fast") ||
+                    o.p06.GetType() == typeof(SonicFast) || o.p06.GetType() == typeof(SnowBoard) ||
                     o.p06.GetState() == "Pole" || o.p06.GetState() == "JumpDash";
                 bool overrideSM64 = LockControls || Time.fixedTime < o.keepLocked;
                 input.locked = overrideSM64;
@@ -296,10 +296,11 @@ namespace SM64Mod
                 else if (overrideSM64)
                 {
                     Quaternion rot = (Quaternion)typeof(PlayerBase).GetField("GeneralMeshRotation", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06);
+                    Vector3 WorldVelocity = (Vector3)typeof(PlayerBase).GetField("WorldVelocity", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(o.p06);
                     float angle = rot.eulerAngles.y;
 
                     o.SetPosition(o.p06.transform.position + new Vector3(0,-0.25f,0));
-                    o.SetVelocity(new Vector3(0, o.p06._Rigidbody.velocity.y*3, 0));
+                    o.SetVelocity(new Vector3(0, WorldVelocity.y*3, 0));
 
                     o.marioRendererObjectRoot.transform.eulerAngles = rot.eulerAngles;
                     if (o.p06.GetState() == "Pole")
@@ -413,7 +414,13 @@ namespace SM64Mod
             }
             else if (o.marioState.action == (uint)ACT_CUSTOM_ANIM || o.marioState.action == (uint)ACT_CUSTOM_ANIM_JUMP)
             {
-                o.SetAction(ACT_WALKING);
+                if (o.p06.GetState() == "Jump")
+                {
+                    o.SetAction(ACT_JUMP);
+                    o.keepLocked = Time.fixedTime+0.25f;
+                }
+                else
+                    o.SetAction(ACT_WALKING);
             }
         }
 
